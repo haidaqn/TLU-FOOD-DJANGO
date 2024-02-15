@@ -7,6 +7,12 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import RegisterSerializer, LoginSerializer, AccountEntitySerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import AccountEntity
+from rest_framework.pagination import PageNumberPagination
+
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size_query_param = 'pageSize'
+    page_query_param ='pageIndex' 
+
 # Create your views here.
 class Welcome(APIView):
     def get(self, request):
@@ -56,3 +62,25 @@ class ProtectedAPIView(APIView):
     def get(self, request):
         # This view is protected and requires authentication
         return Response({'message': 'You are authenticated'})
+
+
+class InvoiceAPIView(APIView):
+    pass
+
+class AccountApiView(APIView):
+    serializer_class = AccountEntitySerializer
+    pagination_class = CustomPageNumberPagination
+    def get_queryset(self):
+        return AccountEntity.objects.all().order_by('id')
+    
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        serializer = self.serializer_class(page, many=True)
+        total_rows = queryset.count()  # Tính tổng số hàng của toàn bộ dữ liệu
+        response_data = {
+            'totalRow': total_rows,
+            'data': serializer.data
+        }
+        return Response(response_data)

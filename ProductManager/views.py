@@ -93,6 +93,14 @@ class FoodApiView(APIView):
         }
         return Response(response_data)
     
+    def post(self, request, *args, **kwargs):
+        serializer = FoodEntitySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 class FoodByTypeApiView(APIView):
     serializer_class = FoodEntitySerializer
 
@@ -107,3 +115,32 @@ class FoodByTypeApiView(APIView):
             'data': serializer.data
         }
         return Response(response_data)
+    
+    def create(self, request, *args, **kwargs):
+        serializer = FoodEntitySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
+class TypeFoodApiView(APIView):
+    serializer_class = TypeFoodSerializer
+    pagination_class = CustomPageNumberPagination
+    
+    def get_queryset(self):
+        return TypeFoodEntity.objects.all().order_by('id')
+    
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        serializer = self.serializer_class(page, many=True)
+        total_rows = queryset.count()  # Tính tổng số hàng của toàn bộ dữ liệu
+        response_data = {
+            'totalRow': total_rows,
+            'data': serializer.data
+        }
+        return Response(response_data)
+    

@@ -94,7 +94,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://domain.com",
     "https://api.domain.com",
     "http://localhost:5500",
-    "http://127.0.0.1:5500"
+    "http://127.0.0.1:5500",
+    "http://localhost:5173"
 ]
 TEMPLATES = [
     {
@@ -123,7 +124,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tlu_food',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'Haidang2003x@',
         'HOST': 'localhost',  # hoặc địa chỉ IP của máy chủ MySQL
         'PORT': '3306',  # hoặc port MySQL mặc định
     }
