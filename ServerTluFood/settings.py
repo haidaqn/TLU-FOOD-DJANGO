@@ -29,9 +29,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
-# Django project settings.py
-
 
 ...
 SIMPLE_JWT = {
@@ -126,7 +123,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tlu_food',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'Haidang2003x@',
         'HOST': 'localhost',  # hoặc địa chỉ IP của máy chủ MySQL
         'PORT': '3306',  # hoặc port MySQL mặc định
     }
