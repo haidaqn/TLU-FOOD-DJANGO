@@ -123,7 +123,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tlu_food',
         'USER': 'root',
-        'PASSWORD': 'Haidang2003x@',
+        'PASSWORD': '123456',
         'HOST': 'localhost',  # hoặc địa chỉ IP của máy chủ MySQL
         'PORT': '3306',  # hoặc port MySQL mặc định
     }

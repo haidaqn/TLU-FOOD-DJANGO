@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FoodEntity,RestaurantEntity,TypeFoodEntity
+from .models import FoodEntity,RestaurantEntity,TypeFoodEntity,ToppingEntity
 
 class FoodEntitySerializer(serializers.ModelSerializer):
     nameRestaurantFood = serializers.CharField(source='restaurant_entity.restaurant_name')
@@ -12,19 +12,23 @@ class FoodEntitySerializer(serializers.ModelSerializer):
     typeFoodEntityId = serializers.IntegerField(source='type_food_entity.id')
     restaurantEntityId = serializers.IntegerField(source='restaurant_entity.id')
     nameType = serializers.CharField(source='type_food_entity.name_type')
-
+    toppingList= serializers.SerializerMethodField()
+  
     class Meta:
         model = FoodEntity
         fields = ['id', 'foodName', 'price', 'detail', 'nameRestaurantFood', 'imgFood',
                   'createBy', 'createAt', 'quantityPurchased', 'typeFoodEntityId',
-                  'restaurantEntityId', 'status', 'distance', 'nameType']
+                  'restaurantEntityId', 'status', 'distance','toppingList', 'nameType']
 
     def get_quantityPurchased(self, obj):
         return obj.quantity_purchased if obj.quantity_purchased is not None else ''
+    def get_toppingList(self, obj):
+        toppings = ToppingEntity.objects.filter(food_entity__restaurant_entity_id=obj.id)
+        serializer = ToppingEntitySerializer(toppings, many=True)
+        return serializer.data
 
 
-
-class RestaurantSerializer(serializers.ModelSerializer):
+class RestaurantEntitySerializer(serializers.ModelSerializer):
     restaurantName = serializers.CharField(source='restaurant_name')
     quantitySold = serializers.IntegerField(source='quantity_sold')
     timeStart = serializers.CharField(source='time_start')
@@ -47,3 +51,24 @@ class TypeFoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = TypeFoodEntity
         fields = ['id', 'nameType','imgType']
+class ToppingEntitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ToppingEntity
+        fields = ['id', 'create_date', 'status', 'name', 'price']
+class ResDetailDataSerializer(serializers.ModelSerializer):
+
+    toppingList = serializers.SerializerMethodField()
+    foods = serializers.SerializerMethodField()
+    class Meta:
+        model = RestaurantEntity
+        fields = ['id', 'create_date', 'status', 'restaurant_name', 'quantity_sold', 'distance', 'star', 'time_start', 'time_close', 'detail', 'img_res','toppingList', 'foods']
+    
+    def get_toppingList(self, obj):
+        toppings = ToppingEntity.objects.filter(food_entity__restaurant_entity_id=obj.id)
+        serializer = ToppingEntitySerializer(toppings, many=True)
+        return serializer.data
+
+    def get_foods(self, obj):
+        foods = FoodEntity.objects.filter(restaurant_entity_id=obj.id)
+        serializer = FoodEntitySerializer(foods, many=True)
+        return serializer.data

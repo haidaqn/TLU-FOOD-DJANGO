@@ -40,7 +40,9 @@ class RestaurantEntity(models.Model):
     
     def __str__(self):
         return str(self.id)
-    
+
+
+
 class FoodEntity(models.Model):
     id = models.AutoField(primary_key=True)
     create_by = models.CharField(max_length=255)
@@ -62,3 +64,21 @@ class FoodEntity(models.Model):
     
     def __str__(self):
         return self.id
+    
+class ToppingEntity(models.Model):
+    id = models.AutoField(primary_key=True)
+    create_by = models.CharField(max_length=255)
+    create_date = models.DateTimeField()
+    modified_by = models.CharField(max_length=255)
+    modified_date = models.DateTimeField()
+    status = models.BooleanField()
+    food_entity = models.ForeignKey(FoodEntity, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    price = models.IntegerField()
+    restaurant_entity = models.ForeignKey(RestaurantEntity, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'topping_entity'
+    
+    def __str__(self):
+        return str(self.id)
