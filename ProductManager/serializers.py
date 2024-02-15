@@ -71,6 +71,12 @@ class FoodEntitySerializer(serializers.ModelSerializer):
 
         return food_entity
 
+    def delete_multiple(self, ids):
+        # Xóa các bản ghi dựa trên danh sách các id được cung cấp
+        deleted_count, _ = FoodEntity.objects.filter(id__in=ids).delete()
+        return deleted_count
+    
+
 class RestaurantEntitySerializer(serializers.ModelSerializer):
     restaurantName = serializers.CharField(source='restaurant_name')
     quantitySold = serializers.IntegerField(source='quantity_sold')

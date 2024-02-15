@@ -100,6 +100,19 @@ class FoodApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def delete(self, request):
+        # Lấy danh sách các id cần xóa từ request.data
+        ids_to_delete = request.data
+        
+        # Tạo một instance của serializer
+        serializer = self.serializer_class(data={})
+        # Gọi phương thức delete_multiple để xóa các bản ghi
+        deleted_count = serializer.delete_multiple(ids_to_delete)
+        # Kiểm tra số lượng bản ghi đã bị xóa
+        if deleted_count > 0:
+            return Response({"message": f"{deleted_count} bản ghi đã được xóa"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"message": "Không có bản ghi nào được xóa"}, status=status.HTTP_404_NOT_FOUND)
     
 class FoodByTypeApiView(APIView):
     serializer_class = FoodEntitySerializer
