@@ -19,10 +19,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ServerTluFood.settings')
 
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),
-    'websocket': AuthMiddlewareStack(
-        URLRouter(
+    'websocket': 
+        JWTAuthMiddleware( URLRouter(
             websocket_urlpatterns
 
         )
+       
     ),
 })

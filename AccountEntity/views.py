@@ -1,14 +1,12 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import RegisterSerializer, LoginSerializer, AccountEntitySerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import AccountEntity
 from rest_framework.pagination import PageNumberPagination
-
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 class CustomPageNumberPagination(PageNumberPagination):
     page_size_query_param = 'pageSize'
     page_query_param ='pageIndex' 
@@ -55,13 +53,6 @@ class LoginAPIView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class ProtectedAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        # This view is protected and requires authentication
-        return Response({'message': 'You are authenticated'})
 
 
 class InvoiceAPIView(APIView):

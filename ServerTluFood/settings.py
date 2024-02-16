@@ -95,7 +95,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+# CHANNELS_MIDDLEWARE  = [
 
+#     'ServerTluFood.middleware.JWTAuthMiddleware',
+
+# ]
 ROOT_URLCONF = 'ServerTluFood.urls'
 CORS_ALLOWED_ORIGINS = [
     "https://domain.com",
@@ -136,7 +140,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tlu_food',
         'USER': 'root',
-        'PASSWORD': 'Haidang2003x@',
+        'PASSWORD': '123456',
         'HOST': 'localhost',  # hoặc địa chỉ IP của máy chủ MySQL
         'PORT': '3306',  # hoặc port MySQL mặc định
     }
