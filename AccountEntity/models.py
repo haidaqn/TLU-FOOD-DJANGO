@@ -31,6 +31,7 @@ class AccountEntityManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
         return user
+    
 class AccountEntity(AbstractBaseUser,PermissionsMixin):
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)

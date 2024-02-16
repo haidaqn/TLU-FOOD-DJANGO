@@ -5,7 +5,7 @@ from django.db import models
 class TypeFoodEntity(models.Model):
     id = models.AutoField(primary_key=True)
     create_by = models.CharField(max_length=255)
-    create_date = models.DateTimeField()
+    create_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.CharField(max_length=255, null=True, default=None)
     modified_date = models.DateTimeField(null=True, default=None)
     status = models.BooleanField()
@@ -20,10 +20,10 @@ class TypeFoodEntity(models.Model):
 class RestaurantEntity(models.Model):
     id = models.AutoField(primary_key=True)
     create_by = models.CharField(max_length=255)
-    create_date = models.DateTimeField()
+    create_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.CharField(max_length=255, null=True, default=None)
     modified_date = models.DateTimeField(null=True, default=None)
-    status = models.BooleanField()
+    status = models.BooleanField(default=True)
     address = models.CharField(max_length=255)
     detail = models.CharField(max_length=255)
     distance = models.FloatField()

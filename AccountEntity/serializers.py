@@ -4,7 +4,6 @@ from rest_framework import serializers
 import re
 class AccountEntitySerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
-
     class Meta:
         model = AccountEntity
         fields = ['id', 'username', 'email', 'create_date', 'modified_date', 'status', 'account_name', 'img_user', 'sdt', 'role']
