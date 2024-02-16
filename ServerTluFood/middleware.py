@@ -14,8 +14,8 @@ class JWTAuthMiddleware(BaseMiddleware):
         if token:
             try:
                 access_token = AccessToken(token)
-                user = access_token.payload.get('user_id')
-                scope['user_id'] = user
+                user_id = access_token.payload.get('user_id')
+                scope['user_id'] = user_id
             except Exception as e:
                 print(e)
                 scope['user_id'] = AnonymousUser()
@@ -23,3 +23,23 @@ class JWTAuthMiddleware(BaseMiddleware):
             scope['user'] = AnonymousUser()
         
         return await super().__call__(scope, receive, send)
+
+
+class JWTMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        jwt_token = request.headers.get('Authorization', None)
+
+        if jwt_token:
+            try:
+                access_token = AccessToken(jwt_token)
+                user_id = access_token.payload.get('user_id')
+                request.user_id = user_id
+            except Exception as e:
+                print("Error:", e)
+                request.user_id = None
+
+        response = self.get_response(request)
+        return response

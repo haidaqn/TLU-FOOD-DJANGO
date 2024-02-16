@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer, LoginSerializer, AccountEntitySerializer
+from .serializers import RegisterSerializer, LoginSerializer, AccountEntitySerializer,AccountInfoSerializer
 from .models import AccountEntity
 from rest_framework.pagination import PageNumberPagination
 from django.core.serializers.json import DjangoJSONEncoder
@@ -75,3 +75,11 @@ class AccountApiView(APIView):
             'data': serializer.data
         }
         return Response(response_data)
+class InfoApiView(APIView):
+    def patch(self, request, *args, **kwargs):
+        account_entity = AccountEntity.objects.get(id=request.user_id)
+        serializer = AccountInfoSerializer(account_entity, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -90,16 +90,15 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'ServerTluFood.middleware.JWTMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# CHANNELS_MIDDLEWARE  = [
-
-#     'ServerTluFood.middleware.JWTAuthMiddleware',
-
-# ]
+CHANNELS_MIDDLEWARE  = [
+    'ServerTluFood.middleware.JWTAuthMiddleware',
+]
 ROOT_URLCONF = 'ServerTluFood.urls'
 CORS_ALLOWED_ORIGINS = [
     "https://domain.com",

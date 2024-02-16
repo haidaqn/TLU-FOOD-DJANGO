@@ -13,6 +13,12 @@ class AccountEntitySerializer(serializers.ModelSerializer):
             return "ADMIN"
         else:
             return "CUSTOMER"
+class AccountInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccountEntity
+        fields = ['username', 'email', 'img_user', 'sdt']
+   
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
