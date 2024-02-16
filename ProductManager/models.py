@@ -41,8 +41,6 @@ class RestaurantEntity(models.Model):
     def __str__(self):
         return str(self.id)
 
-
-
 class FoodEntity(models.Model):
     id = models.AutoField(primary_key=True)
     create_by = models.CharField(max_length=255)
@@ -82,3 +80,5 @@ class ToppingEntity(models.Model):
     
     def __str__(self):
         return str(self.id)
+    
+    

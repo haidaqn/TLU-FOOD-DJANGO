@@ -195,7 +195,7 @@ class FoodByTypeApiView(APIView):
     def get_queryset(self,id_type):
         return FoodEntity.objects.filter(type_food_entity_id=id_type)
 
-    def get(self, id_type):
+    def get(self, request, id_type):
         queryset = self.get_queryset(id_type)
         serializer = FoodEntitySerializer(queryset, many=True)
         response_data = {
