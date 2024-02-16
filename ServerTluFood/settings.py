@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-%-1=y-(%%!43@@pl5d3(-!1y_5&4sigkoepqleqw=j-y&k8*#r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1', 'localhost'
+]
 
 
 
@@ -56,18 +58,23 @@ SIMPLE_JWT = {
 }
 
 INSTALLED_APPS = [
+   'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'channels',
     'corsheaders',
     'rest_framework',
     'AccountEntity',
-    'ProductManager'
+    'ProductManager',
+    'PaymentManager'
 
 ]
+
+
 AUTH_USER_MODEL = 'AccountEntity.AccountEntity'
 
 REST_FRAMEWORK = {
@@ -77,11 +84,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -113,7 +120,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ServerTluFood.wsgi.application'
-
+ASGI_APPLICATION = 'ServerTluFood.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

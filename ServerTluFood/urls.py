@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/',include('AccountEntity.urls')),
     path('prod/',include('ProductManager.urls')),
-  
+    path('payment/',include('PaymentManager.urls')),
 ]

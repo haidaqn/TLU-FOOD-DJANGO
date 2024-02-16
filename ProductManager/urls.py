@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RandomFoodAPIView,RandomResAPIView,AllTypeFoodApiView,ResDetailApiView,ResApiView,FoodApiView,FoodByTypeApiView
+from .views import RandomFoodAPIView,RandomResAPIView,AllTypeFoodApiView,ResDetailApiView,ResApiView,FoodApiView,FoodByTypeApiView,SearchFoodApiView
 urlpatterns = [
     path('rec-food', RandomFoodAPIView.as_view(), name='rec-food'),
     path('rec-res', RandomResAPIView.as_view(), name='rec-rec'),
@@ -8,5 +8,6 @@ urlpatterns = [
     path('paging-res', ResApiView.as_view(), name='paging-res'),
     path('paging-food', FoodApiView.as_view(), name='paging-food'),
     path('paging-food-type/<int:id_type>', FoodByTypeApiView.as_view(), name='paging-food'),
+    path('search-food', SearchFoodApiView.as_view(), name='search-food'),
     
 ]

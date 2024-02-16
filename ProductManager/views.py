@@ -107,3 +107,13 @@ class FoodByTypeApiView(APIView):
             'data': serializer.data
         }
         return Response(response_data)
+    
+class SearchFoodApiView(APIView):
+    def get(self, request):
+        search_string = request.query_params.get('searchString', '')
+        if search_string:
+            foods = FoodEntity.objects.filter(food_name__icontains=search_string)
+            serializer = FoodEntitySerializer(foods, many=True)
+            return Response({"data":serializer.data})
+        else:
+            return Response({'message': 'Vui lòng nhập chuỗi tìm kiếm.'}, status=400)
