@@ -1,14 +1,5 @@
 from rest_framework import serializers
-from .models import VoucherEntity,BillDetailEntity,BillEntity
-
-class VoucherEntitySerializer(serializers.ModelSerializer):
-    createDate = serializers.DateTimeField(source='create_date', format='%Y-%m-%dT%H:%M:%S')
-    expired = serializers.DateTimeField(source='expired',format='%Y-%m-%dT%H:%M:%S')
-
-    class Meta:
-        model = VoucherEntity
-        fields = ['id', 'createDate', 'status', 'discount', 'expired', 'detail', 'code', 'quantity', 'title']
-
+from .models import BillDetailEntity,BillEntity
 class BillDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillDetailEntity
