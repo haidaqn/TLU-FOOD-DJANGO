@@ -17,11 +17,11 @@ class AccountEntityManager(BaseUserManager):
         if user.check_password(password):
             return user
         return None
-    def create_user(self, username, email, account_name, password=None):
-        if not email:
-            raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
-        user = self.model(username=username, email=email, account_name=account_name)
+    def create_user(self, username, account_name,sdt="", email=None, password=None):
+        if email:
+            email = self.normalize_email(email)
+            
+        user = self.model(username=username, email=email, account_name=account_name,sdt=sdt)
         user.set_password(password)  # Mã hóa mật khẩu trước khi lưu
         user.save(using=self._db)
         return user
@@ -34,7 +34,7 @@ class AccountEntityManager(BaseUserManager):
     
 class AccountEntity(AbstractBaseUser,PermissionsMixin):
     username = models.CharField(max_length=255, unique=True)
-    email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
+    email = models.EmailField(verbose_name='email address', max_length=255,null=True, unique=True)
     create_date = models.DateTimeField(default=timezone.now)
     modified_date = models.DateTimeField(default=timezone.now)
     status = models.BooleanField(default=True)

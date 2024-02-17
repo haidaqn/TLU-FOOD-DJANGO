@@ -47,7 +47,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate_account_name(self, value):
         words = value.strip().split()
-        if len(words) < 2 or not all(re.match(r'^[a-zA-Z]+$', word) for word in words):
+        print(words)
+        if len(words) < 2 or not all(re.match(r'^[a-zA-ZÀ-ỹ\s]+$', word) for word in words):
             raise serializers.ValidationError("Họ và tên gồm 2 từ trở lên chỉ bao gồm chữ cái")
         return value
 
@@ -80,4 +81,4 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('re_password', None)
-        return super().create(validated_data)
+        return AccountEntity.objects.create_user(**validated_data)
