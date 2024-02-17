@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import AccountEntity
+from .models import AccountEntity,VoucherEntity
 from rest_framework import serializers
 import re
+from datetime import datetime
 class AccountEntitySerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
     class Meta:
@@ -34,6 +35,20 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail="Không được bỏ trống mật khẩu")
 
         return attrs
+
+class VoucherSerializer(serializers.ModelSerializer):
+    create_by = serializers.CharField(default="ADMIN", required=False)
+    create_date = serializers.DateTimeField(default=datetime.now, required=False)
+    createAt = serializers.DateTimeField(source='create_date', read_only=True)
+
+    class Meta:
+        model = VoucherEntity
+        fields = ['id', 'create_by', 'create_date', 'status', 'detail', 'expired', 'quantity', 'discount', 'title', 'code', 'createAt']
+
+    def delete_multiple(self, ids):
+        # Xóa các bản ghi dựa trên danh sách các id được cung cấp
+        deleted_count, _ = VoucherEntity.objects.filter(id__in=ids).delete()
+        return deleted_count
 
 class RegisterSerializer(serializers.ModelSerializer):
     re_password = serializers.CharField(write_only=True)
