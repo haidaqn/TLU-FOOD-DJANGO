@@ -15,6 +15,9 @@ import random
 from django.http import HttpResponse
 from django.conf import settings
 from django.http import JsonResponse
+import random
+import string
+
 class CustomPageNumberPagination(PageNumberPagination):
     page_size_query_param = 'pageSize'
     page_query_param ='pageIndex' 
@@ -179,7 +182,7 @@ class UpdateInfoUserAPIView(APIView):
         cookie_data = json.dumps(data_user) 
         response = Response({"message": "OTP sent successfully", "status": status.HTTP_200_OK})
         response.set_cookie('data-update', cookie_data)
-        email_message = f'Mã OTP của bạn là = {otp} xin vui lòng không chia sẻ với ai !'
+        email_message = f'Mã OTP của bạn là {otp} xin vui lòng không chia sẻ với ai !'
         send_mail(
             'OTP CHANGE INFO USER AT TLU-FOOD',
             email_message,
@@ -188,7 +191,6 @@ class UpdateInfoUserAPIView(APIView):
             fail_silently=False,
         )
         return response
-
             
 class FinalChangeInfoUserAPI(APIView) :
     def post(self, request, otp):
@@ -222,3 +224,57 @@ class FinalChangeInfoUserAPI(APIView) :
         response.delete_cookie('data-update')
         return response
            
+class ForgotPasswordAPIView(APIView):
+    def post(self, request, username):
+        try:
+            user = AccountEntity.objects.get(username=username)
+        except AccountEntity.DoesNotExist:
+            return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Tạo mật khẩu mới ngẫu nhiên
+        new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+        
+        # Mã hóa mật khẩu mới
+        user.set_password(new_password)
+        user.save()
+        
+        # Gửi email thông báo mật khẩu mới cho người dùng
+        email_subject = 'Thiết lập lại mật khẩu'
+        email_message = f'Mật khẩu mới của bạn là: "{new_password}". Đăng nhập vào hệ thống và đổi mật khẩu ngay!'
+        send_mail(
+            email_subject,
+            email_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+        
+        return Response({"message": "Mật khẩu mới đã được gửi đến email của bạn"}, status=status.HTTP_200_OK)
+class ChangePasswordAPIView(APIView):
+    def post(self, request,username):
+        # Lấy dữ liệu từ request
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+
+        # Kiểm tra xem các trường dữ liệu đã được gửi lên đầy đủ chưa
+        if not current_password or not new_password or not confirm_password:
+            return Response({'error': 'Vui lòng điền đầy đủ thông tin'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = AccountEntity.objects.get(username=username)
+        except AccountEntity.DoesNotExist:
+            return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
+        # Kiểm tra xác thực người dùng
+        if not user.check_password(current_password):
+            return Response({'error': 'Mật khẩu hiện tại không đúng'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Kiểm tra xem mật khẩu mới và xác nhận mật khẩu mới có trùng khớp không
+        if new_password != confirm_password:
+            return Response({'error': 'Mật khẩu mới và xác nhận mật khẩu không khớp'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Mã hóa mật khẩu mới
+        # Cập nhật mật khẩu mới cho người dùng
+        user.set_password(confirm_password)
+        user.save()
+
+        return Response({'message': 'Đổi mật khẩu thành công'}, status=status.HTTP_200_OK)

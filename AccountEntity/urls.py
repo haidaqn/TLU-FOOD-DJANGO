@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationAPIView,LoginAPIView,Welcome,AccountApiView,VoucherAPIView,UpdateInfoUserAPIView,FinalChangeInfoUserAPI
+from .views import RegistrationAPIView,LoginAPIView,Welcome,AccountApiView,VoucherAPIView,UpdateInfoUserAPIView,FinalChangeInfoUserAPI,ForgotPasswordAPIView,ChangePasswordAPIView
 urlpatterns = [
     path('register', RegistrationAPIView.as_view(), name='register'),
     path('login', LoginAPIView.as_view(), name='login'),
@@ -8,6 +8,8 @@ urlpatterns = [
     path('paging-account',AccountApiView.as_view(),name='paing-account'),
     path('update-info-user/<int:pk>',UpdateInfoUserAPIView.as_view(),name='update-info'),
     path('final-update-info-user/<int:otp>',FinalChangeInfoUserAPI.as_view(),name='final-update-info'),
+    path('forgot-password/<str:username>',ForgotPasswordAPIView.as_view(),name='forgot-password'),
+    path('change-password/<str:username>',ChangePasswordAPIView.as_view(),name='change-password'),
     
     #voucher
     
