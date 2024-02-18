@@ -2,7 +2,10 @@ from rest_framework import serializers
 from .models import AccountEntity,VoucherEntity
 from rest_framework import serializers
 import re
+from rest_framework.response import Response
+from rest_framework import status
 from datetime import datetime
+
 class AccountEntitySerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
     class Meta:
@@ -49,6 +52,14 @@ class VoucherSerializer(serializers.ModelSerializer):
         # Xóa các bản ghi dựa trên danh sách các id được cung cấp
         deleted_count, _ = VoucherEntity.objects.filter(id__in=ids).delete()
         return deleted_count
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = AccountEntity
+        fields = ['email', 'account_name', 'sdt', 'img_user']
+        
 
 class RegisterSerializer(serializers.ModelSerializer):
     re_password = serializers.CharField(write_only=True)

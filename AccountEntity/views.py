@@ -3,12 +3,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .serializers import RegisterSerializer, LoginSerializer, AccountEntitySerializer,VoucherSerializer
+from .serializers import RegisterSerializer, LoginSerializer, AccountEntitySerializer,VoucherSerializer,UpdateUserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import AccountEntity,VoucherEntity
 from rest_framework.pagination import PageNumberPagination
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+from django.core.mail import send_mail
+from rest_framework.response import Response
+import random
+from django.http import HttpResponse
+from django.conf import settings
+from django.http import JsonResponse
 class CustomPageNumberPagination(PageNumberPagination):
     page_size_query_param = 'pageSize'
     page_query_param ='pageIndex' 
@@ -150,3 +156,69 @@ class InfoApiView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UpdateInfoUserAPIView(APIView):
+    def post(self, request, pk):
+        try:
+            user = AccountEntity.objects.get(pk=pk)
+        except AccountEntity.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        def generate_random_numbers():
+            random_numbers = [random.randint(0, 9) for _ in range(6)]
+            return ''.join(map(str, random_numbers))
+
+        # Sử dụng hàm
+        otp = generate_random_numbers()
+        data_user = {
+            'data': request.data,
+            'otp': otp,
+            'idUser': pk
+        }
+        # response = HttpResponse("Welcome TLU-FOOD.")  
+        cookie_data = json.dumps(data_user) 
+        response = Response({"message": "OTP sent successfully", "status": status.HTTP_200_OK})
+        response.set_cookie('data-update', cookie_data)
+        email_message = f'Mã OTP của bạn là = {otp} xin vui lòng không chia sẻ với ai !'
+        send_mail(
+            'OTP CHANGE INFO USER AT TLU-FOOD',
+            email_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [request.data.get('email')],
+            fail_silently=False,
+        )
+        return response
+
+            
+class FinalChangeInfoUserAPI(APIView) :
+    def post(self, request, otp):
+        cookie = request.COOKIES.get('data-update')
+        if not cookie:
+            return JsonResponse({"error": "Cookie 'data-update' not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        data_change = json.loads(cookie)
+        print(data_change.get('otp'))
+        print(otp)
+        if str(otp) != str(data_change.get('otp')):
+            response = JsonResponse({"error": "OTP does not match"}, status=status.HTTP_400_BAD_REQUEST)
+            response.delete_cookie('data-update')
+            return response
+        
+        try:
+            user = AccountEntity.objects.get(pk=data_change.get('idUser'))
+        except AccountEntity.DoesNotExist:
+            response = JsonResponse({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            response.delete_cookie('data-update')
+            return response
+        
+        serializer = UpdateUserSerializer(user, data=data_change.get('data'), partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            response = JsonResponse(serializer.data)
+            response.delete_cookie('data-update')
+            return response
+        
+        response = JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        response.delete_cookie('data-update')
+        return response
+           

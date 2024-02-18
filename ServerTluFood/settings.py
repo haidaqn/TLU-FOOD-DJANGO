@@ -100,13 +100,25 @@ CHANNELS_MIDDLEWARE  = [
     'ServerTluFood.middleware.JWTAuthMiddleware',
 ]
 ROOT_URLCONF = 'ServerTluFood.urls'
+
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+
 CORS_ALLOWED_ORIGINS = [
     "https://domain.com",
     "https://api.domain.com",
     "http://localhost:5500",
     "http://127.0.0.1:5500",
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://localhost:5000",
+    "https://localhost:5000",
 ]
+
+CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+CORS_ALLOW_CREDENTIALS = True
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -139,7 +151,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tlu_food',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'Haidang2003x@',
         'HOST': 'localhost',  # hoặc địa chỉ IP của máy chủ MySQL
         'PORT': '3306',  # hoặc port MySQL mặc định
     }
@@ -164,6 +176,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER='test12202023test@gmail.com'
+EMAIL_HOST_PASSWORD='prymsxigzsntalpj'
+EMAIL_USE_TLS=True
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
