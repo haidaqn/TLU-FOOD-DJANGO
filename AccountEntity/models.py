@@ -1,5 +1,5 @@
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 
@@ -13,28 +13,33 @@ class AccountEntityManager(BaseUserManager):
             print(user.check_password(password))
         except self.model.DoesNotExist:
             return None
-        
+
         if user.check_password(password):
             return user
         return None
-    def create_user(self, username, account_name,sdt="", email=None, password=None):
+
+    def create_user(self, username, account_name, sdt="", email=None, password=None):
         if email:
             email = self.normalize_email(email)
-            
-        user = self.model(username=username, email=email, account_name=account_name,sdt=sdt)
+
+        user = self.model(username=username, email=email,
+                          account_name=account_name, sdt=sdt)
         user.set_password(password)  # Mã hóa mật khẩu trước khi lưu
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username,account_name, email, password):
-        user = self.create_user(username=username, email=email, account_name=account_name, password=password)
+    def create_superuser(self, username, account_name, email, password):
+        user = self.create_user(
+            username=username, email=email, account_name=account_name, password=password)
         user.is_superuser = True
         user.save(using=self._db)
         return user
-    
-class AccountEntity(AbstractBaseUser,PermissionsMixin):
+
+
+class AccountEntity(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True)
-    email = models.EmailField(verbose_name='email address', max_length=255,null=True, unique=True)
+    email = models.EmailField(
+        verbose_name='email address', max_length=255, null=True, unique=True)
     create_date = models.DateTimeField(default=timezone.now)
     modified_date = models.DateTimeField(default=timezone.now)
     status = models.BooleanField(default=True)
@@ -46,6 +51,9 @@ class AccountEntity(AbstractBaseUser,PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    class Meta:
+        db_table = 'account_entity'
+
     def __str__(self):
         return self.email
 
@@ -54,11 +62,12 @@ class AccountEntity(AbstractBaseUser,PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
-    
+
     @property
     def is_staff(self):
         return self.is_superuser
-    
+
+
 class VoucherEntity(models.Model):
     id = models.AutoField(primary_key=True)
     create_by = models.CharField(max_length=255)
@@ -70,8 +79,9 @@ class VoucherEntity(models.Model):
     discount = models.IntegerField()
     title = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
-    
-    
-    
+
+    class Meta:
+        db_table = 'voucher_entity'
+
     def __str__(self):
         return self.id

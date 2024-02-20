@@ -151,14 +151,6 @@ class AccountApiView(APIView):
             'data': serializer.data
         }
         return Response(response_data)
-class InfoApiView(APIView):
-    def patch(self, request, *args, **kwargs):
-        account_entity = AccountEntity.objects.get(id=request.user_id)
-        serializer = AccountInfoSerializer(account_entity, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class UpdateInfoUserAPIView(APIView):
     def post(self, request, pk):
