@@ -29,7 +29,7 @@ class JWTMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
          # Danh sách các path mà middleware sẽ bỏ qua việc kiểm tra token
-        self.exclude_paths = ['/prod/all-type', '/prod/rec-res', '/prod/rec-food','/auth/hello',"/auth/login","/auth/register"]
+        self.exclude_paths = ['/prod/all-type', '/prod/rec-res', '/prod/rec-food','/auth/hello',"/auth/login","/auth/register","prod/paging-food-type"]
 
     def __call__(self, request):
         jwt_token = request.headers.get('Authorization', None)

@@ -26,6 +26,7 @@ class BillApiView(APIView):
         return queryset
     def get_queryset_all(self, order_status=None):
         queryset = BillEntity.objects.all()
+        print(queryset)
         if order_status is not None: # In ra giá trị order_status_value để kiểm tra
             for choice_value, choice_name in ORDER_STATUS_CHOICES:
                 if choice_name == order_status:

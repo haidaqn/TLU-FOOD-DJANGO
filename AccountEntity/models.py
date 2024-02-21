@@ -65,7 +65,7 @@ class AccountEntity(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_staff(self):
-        return self.is_superuser
+        return not self.is_superuser
 
 
 class VoucherEntity(models.Model):
