@@ -15,7 +15,7 @@ class BillDetailSerializer(serializers.ModelSerializer):
         model = BillDetailEntity
         fields = ['foodId', 'nameFood', 'priceFood', 'quantity', 'nameRes', 'resId', 'item_list','address']
 class BillSerializer(serializers.ModelSerializer):
-    voucherResponseBill = serializers.SerializerMethodField()
+    voucherResponseBill = serializers.CharField(source='code')
     foodResponseBills = serializers.SerializerMethodField()
     orderStatus= serializers.CharField(source='get_order_status_display')
     accountId=serializers.IntegerField(source="account_entity_id")

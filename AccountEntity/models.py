@@ -85,3 +85,7 @@ class VoucherEntity(models.Model):
 
     def __str__(self):
         return self.id
+    def delete_one_quantity(self):
+        if self.quantity > 0:
+            self.quantity -= 1
+            self.save()

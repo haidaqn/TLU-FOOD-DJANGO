@@ -4,6 +4,7 @@ from urllib.parse import parse_qs
 from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.tokens import AccessToken
 from django.http import JsonResponse
+import re
 class JWTAuthMiddleware(BaseMiddleware):
     def __init__(self, inner):
         super().__init__(inner)
@@ -29,16 +30,33 @@ class JWTMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
          # Danh sách các path mà middleware sẽ bỏ qua việc kiểm tra token
-        self.exclude_paths = ['/prod/all-type', '/prod/rec-res', '/prod/rec-food','/auth/hello',"/auth/login","/auth/register","prod/paging-food-type"]
+        self.exclude_path_patterns = [
+
+            r'^/auth/hello$',
+            r'^/auth/login$',
+            r'^/auth/register$',
+            r'^/auth/forgot-password/\w+$',
+            r'^/prod/paging-food-type/\d+$',        
+            r'^/prod/search-food/\d+$',
+            r'^/prod/paging-res$',
+            r'^/prod/paging-food$',
+            r'^/prod/detail-res/\d+$',
+            r'^/prod/search-food',
+            r'^/prod/all-type$',
+            r'^/prod/rec-res$',
+            r'^/prod/rec-food$',
+        ]
 
     def __call__(self, request):
         jwt_token = request.headers.get('Authorization', None)
         print(jwt_token)
         path = request.path
-        if path in self.exclude_paths:
-            # Bỏ qua việc kiểm tra token và tiếp tục xử lý request
-            response = self.get_response(request)
-            return response
+        for pattern in self.exclude_path_patterns:
+            if re.match(pattern, path):
+                # Nếu đường dẫn trùng khớp, bỏ qua việc kiểm tra token và tiếp tục xử lý request
+                response = self.get_response(request)
+                return response
+
 
         if jwt_token:
             jwt_token=jwt_token.split(" ")[1]

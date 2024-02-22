@@ -17,13 +17,13 @@ urlpatterns = [
     path('search-food', SearchFoodApiView.as_view(), name='search-food'),
     
     path('paging-type-food', TypeFoodApiView.as_view(), name='paging-type-food'),
-    path('paging-type-food/<int:pk>/', TypeFoodApiView.as_view(), name='paging-type-food-path'),
+    path('paging-type-food/<int:pk>', TypeFoodApiView.as_view(), name='paging-type-food-path'),
     
     
-    path('paging-food/', FoodApiView.as_view(), name='paging-food-query'),
-    path('paging-food/<int:pk>/', FoodApiView.as_view(), name='paging-food-path'),
+    path('paging-food', FoodApiView.as_view(), name='paging-food-query'),
+    path('paging-food/<int:pk>', FoodApiView.as_view(), name='paging-food-path'),
     
     #detail
-    path('detail-res/<int:res_id>/', ResDetailApiView.as_view(), name='detail-res'),
+    path('detail-res/<int:res_id>', ResDetailApiView.as_view(), name='detail-res'),
 
 ]

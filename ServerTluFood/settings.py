@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%-1=y-(%%!43@@pl5d3(-!1y_5&4sigkoepqleqw=j-y&k8*#r'
+SECRET_KEY = "d'jango-insecure-%-1=y-(%%!43@@pl5d3(-!1y_5&4sigkoepqleqw=j-y&k8*#r"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -145,16 +145,17 @@ CHANNEL_LAYERS = {
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+import os
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tlu_food',
         'USER': 'root',
-        'PASSWORD': 'Haidang2003x@',
+        'PASSWORD': '123456',
         'HOST': 'localhost',  # hoặc địa chỉ IP của máy chủ MySQL
         'PORT': '3306',  # hoặc port MySQL mặc định
     }
+
 }
 
 

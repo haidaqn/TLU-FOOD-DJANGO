@@ -64,6 +64,7 @@ class FoodEntity(models.Model):
         return self.id
     
     def update_quantity_purchased(self, order_status, quantity):
+        print("seaf:",order_status, quantity)
         if order_status == 'DELIVERED':
             self.quantity_purchased = quantity
             self.save()

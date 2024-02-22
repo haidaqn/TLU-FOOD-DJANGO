@@ -4,7 +4,7 @@ import json
 from .models import BillDetailEntity, BillEntity
 from ProductManager.models import FoodEntity
 from channels.db import database_sync_to_async
-from AccountEntity.models import AccountEntity
+from AccountEntity.models import AccountEntity,VoucherEntity
 class CheckoutConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
@@ -44,28 +44,27 @@ class CheckoutConsumer(AsyncWebsocketConsumer):
             'modified_by': user,
         }
         bill = BillEntity.objects.create(**bill_data)
-
         for bill_food_request_data in data.get("billFoodRequests", []):
             food = FoodEntity.objects.get(id=bill_food_request_data['foodId'])
-            # food.update_quantity_purchased(
-            #     data.get('orderStatus', None), bill_food_request_data['quantity'])
-
-            # food.update_restaurant_quantity_sold(food)
+ 
             BillDetailEntity.objects.create(
-                bill_entity_id=bill,
-                food_entity_id=food,
+                bill_entity=bill,
+                food_entity=food,
                 quantity=bill_food_request_data['quantity']
             )
+        if len(bill_data['code'])>0:
+            voucher = VoucherEntity.objects.get(code=bill_data['code'])
+            voucher.delete_one_quantity()
         return bill
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         try:
             bill = await self.add_bill_to_db(data)
-            print(bill)
             await self.channel_layer.group_send(self.room_group_name,{
                 'type': 'created_bill',
                 'bill_id': bill.id,
+                'send_by':bill.account_entity.username,
                 'message': 'Bill created successfully.',
             })
         except Exception as e:

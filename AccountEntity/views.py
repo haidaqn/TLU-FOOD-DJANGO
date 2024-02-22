@@ -69,7 +69,17 @@ class LoginAPIView(APIView):
 class InvoiceAPIView(APIView):
     pass
 
-
+class VoucherCusAPIView(APIView):
+    serializer_class = VoucherSerializer
+    def get_queryset(self):
+        return VoucherEntity.objects.all().order_by('id')
+    def get(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True) 
+        response_data = {
+            'data': serializer.data
+        }
+        return Response(response_data)
 class VoucherAPIView(APIView):
     serializer_class = VoucherSerializer
     pagination_class = CustomPageNumberPagination
