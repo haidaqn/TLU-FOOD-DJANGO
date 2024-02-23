@@ -280,3 +280,57 @@ class ChangePasswordAPIView(APIView):
         user.save()
 
         return Response({'message': 'Đổi mật khẩu thành công'}, status=status.HTTP_200_OK)
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser
+import re
+import time
+from PIL import Image
+import io
+import requests as req
+class ExtractTextFromImageView(APIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request):
+        if request.FILES.get('image'):
+            image_file = request.FILES['image']
+            image_data = image_file.read()
+            image = Image.open(io.BytesIO(image_data))
+            width, height = image.size
+            image = image.resize((width // 2, height // 2), Image.LANCZOS)
+
+            # Tạo một buffer để lưu ảnh mới
+            image_buffer = io.BytesIO()
+            image.save(image_buffer, format="JPEG")
+            image_buffer.seek(0)
+
+            post_data = b"------WebKitFormBoundary\r\nContent-Disposition: form-data; name=\"encoded_image\"; filename=\"image.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n" + image_buffer.read() + b"\r\n------WebKitFormBoundary--\r\n"
+
+            headers = {
+                'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary',
+                'Content-Length': str(len(post_data)),
+                'Referer': 'https://lens.google.com/',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            }
+
+            response = req.post(f'https://lens.google.com/v3/upload?hl=en-VN&re=df&stcs={time.time_ns() // 10**6}&ep=subb', headers=headers, data=post_data)
+
+            text = re.findall(r'\"vi\".*?]\]\]', response.text)
+            for res in text:
+                if 'SV' in res:
+                    text = eval(re.findall(r'\[\".*?]', res)[0])
+                    break
+            else:
+                return Response({"text": "No text found"})
+
+            text_data = {
+                'nganh': text[0].split(' - ')[0],
+                'ma_nganh': text[0].split(' - ')[1],
+                'ho_ten': text[2],
+                'ngay_sinh': text[3],
+                'msv': text[4][-6:],
+                'nam_hoc': text[5],
+            }
+
+            return Response(text_data)
+
+        return Response({"error": "Invalid request method or missing image file"})

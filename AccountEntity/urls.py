@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (RegistrationAPIView, LoginAPIView, Welcome, AccountApiView, VoucherAPIView, UpdateInfoUserAPIView, FinalChangeInfoUserAPI, 
-                    ForgotPasswordAPIView, ChangePasswordAPIView, VoucherCusAPIView)
+                    ForgotPasswordAPIView, ChangePasswordAPIView, VoucherCusAPIView,ExtractTextFromImageView)
 urlpatterns = [
     path('register', RegistrationAPIView.as_view(), name='register'),
     path('login', LoginAPIView.as_view(), name='login'),
@@ -20,6 +20,6 @@ urlpatterns = [
     path('vouchers', VoucherCusAPIView.as_view(), name='all-voucher'),
     path('paging-voucher', VoucherAPIView.as_view(), name='paging-voucher'),
     path('paging-voucher/<int:pk>/',
-         VoucherAPIView.as_view(), name='paging-voucher-path')
-
+         VoucherAPIView.as_view(), name='paging-voucher-path'),
+     path('check_thesv', ExtractTextFromImageView.as_view(), name='detect_text'),
 ]

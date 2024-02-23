@@ -45,6 +45,7 @@ class JWTMiddleware:
             r'^/prod/all-type$',
             r'^/prod/rec-res$',
             r'^/prod/rec-food$',
+            r'^/auth/check_thesv$'
         ]
 
     def __call__(self, request):
