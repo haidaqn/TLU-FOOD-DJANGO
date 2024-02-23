@@ -315,12 +315,15 @@ class ExtractTextFromImageView(APIView):
             response = req.post(f'https://lens.google.com/v3/upload?hl=en-VN&re=df&stcs={time.time_ns() // 10**6}&ep=subb', headers=headers, data=post_data)
 
             text = re.findall(r'\"vi\".*?]\]\]', response.text)
+            
             for res in text:
                 if 'SV' in res:
                     text = eval(re.findall(r'\[\".*?]', res)[0])
                     break
             else:
                 return Response({"text": "No text found"})
+
+            print(text)
 
             text_data = {
                 'nganh': text[0].split(' - ')[0],
@@ -330,6 +333,7 @@ class ExtractTextFromImageView(APIView):
                 'msv': text[4][-6:],
                 'nam_hoc': text[5],
             }
+
 
             return Response(text_data)
 
