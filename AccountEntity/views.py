@@ -1,5 +1,4 @@
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -169,30 +168,45 @@ class UpdateInfoUserAPIView(APIView):
         except AccountEntity.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        def generate_random_numbers():
-            random_numbers = [random.randint(0, 9) for _ in range(6)]
-            return ''.join(map(str, random_numbers))
-
-        # Sử dụng hàm
-        otp = generate_random_numbers()
-        data_user = {
-            'data': request.data,
-            'otp': otp,
-            'idUser': pk
-        }
-        # response = HttpResponse("Welcome TLU-FOOD.")  
-        cookie_data = json.dumps(data_user) 
-        response = Response({"message": "OTP sent successfully", "status": status.HTTP_200_OK})
-        response.set_cookie('data-update', cookie_data)
-        email_message = f'Mã OTP của bạn là {otp} xin vui lòng không chia sẻ với ai !'
-        send_mail(
-            'OTP CHANGE INFO USER AT TLU-FOOD',
-            email_message,
-            settings.DEFAULT_FROM_EMAIL,
-            [request.data.get('email')],
-            fail_silently=False,
-        )
+        try:
+            user = AccountEntity.objects.get(pk=request.data.get('idUser'))
+        except AccountEntity.DoesNotExist:
+            response = JsonResponse({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            response.delete_cookie('data-update')
+            return response
+        
+        serializer = UpdateUserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            response = JsonResponse(serializer.data)
+            return response
+        
+        response = JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return response
+        # def generate_random_numbers():
+        #     random_numbers = [random.randint(0, 9) for _ in range(6)]
+        #     return ''.join(map(str, random_numbers))
+
+        # # Sử dụng hàm
+        # otp = generate_random_numbers()
+        # data_user = {
+        #     'data': request.data,
+        #     'otp': otp,
+        #     'idUser': pk
+        # }
+        # # response = HttpResponse("Welcome TLU-FOOD.")  
+        # cookie_data = json.dumps(data_user) 
+        # response = Response({"message": "OTP sent successfully", "status": status.HTTP_200_OK})
+        # response.set_cookie('data-update', cookie_data)
+        # email_message = f'Mã OTP của bạn là {otp} xin vui lòng không chia sẻ với ai !'
+        # send_mail(
+        #     'OTP CHANGE INFO USER AT TLU-FOOD',
+        #     email_message,
+        #     settings.DEFAULT_FROM_EMAIL,
+        #     [request.data.get('email')],
+        #     fail_silently=False,
+        # )
+        # return response
             
 class FinalChangeInfoUserAPI(APIView) :
     def post(self, request, otp):

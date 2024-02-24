@@ -9,7 +9,7 @@ urlpatterns = [
     path('paging-account', AccountApiView.as_view(), name='paing-account'),
     path('update-info-user/<int:pk>',
          UpdateInfoUserAPIView.as_view(), name='update-info'),
-    path('final-update-info-user/<int:otp>',
+    path('final-update-info/<int:otp>',
          FinalChangeInfoUserAPI.as_view(), name='final-update-info'),
     path('forgot-password/<str:username>',
          ForgotPasswordAPIView.as_view(), name='forgot-password'),
